@@ -13,9 +13,9 @@ async function fetchContributions() {
   }
   
   console.log(`Fetching data for ${GITHUB_USERNAME}...`);
-  const query = \`
+  const query = `
     query {
-      user(login: "\${GITHUB_USERNAME}") {
+      user(login: "${GITHUB_USERNAME}") {
         contributionsCollection {
           contributionCalendar {
             totalContributions
@@ -29,12 +29,12 @@ async function fetchContributions() {
         }
       }
     }
-  \`;
+  `;
 
   const res = await fetch('https://api.github.com/graphql', {
     method: 'POST',
     headers: {
-      'Authorization': \`Bearer \${GITHUB_TOKEN}\`,
+      'Authorization': `Bearer ${GITHUB_TOKEN}`,
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({ query })
@@ -78,34 +78,34 @@ async function runExporter() {
   }
 
   const totalDuration = await page.evaluate(() => window.totalDuration);
-  console.log(\`Animation duration: \${totalDuration.toFixed(2)}s\`);
+  console.log(`Animation duration: ${totalDuration.toFixed(2)}s`);
 
   const fps = 30;
   const dt = 1 / fps;
   const numFrames = Math.ceil(totalDuration / dt);
   
-  console.log(\`Capturing \${numFrames} frames...\`);
+  console.log(`Capturing ${numFrames} frames...`);
 
   for (let i = 0; i < numFrames; i++) {
     await page.evaluate((dt) => window.renderFrame(dt), dt);
     await new Promise(r => setTimeout(r, 10));
-    const framePath = path.join(framesDir, \`frame_\${String(i).padStart(4, '0')}.png\`);
+    const framePath = path.join(framesDir, `frame_${String(i).padStart(4, '0')}.png`);
     await page.screenshot({ path: framePath, type: 'png' });
-    if (i % 20 === 0) console.log(\`Frame \${i}/\${numFrames}\`);
+    if (i % 20 === 0) console.log(`Frame ${i}/${numFrames}`);
   }
 
-  console.log(\`Finished capturing \${numFrames} frames.\`);
+  console.log(`Finished capturing ${numFrames} frames.`);
   await browser.close();
 
   console.log('Using ffmpeg to encode GIF...');
   const outputGif = path.join(process.cwd(), 'contributions.gif');
   if (fs.existsSync(outputGif)) fs.unlinkSync(outputGif);
 
-  const ffmpegCmd = \`ffmpeg -y -framerate \${fps} -i frames/frame_%04d.png -filter_complex "[0:v] split [a][b];[a] palettegen [p];[b][p] paletteuse" \${outputGif}\`;
+  const ffmpegCmd = `ffmpeg -y -framerate ${fps} -i frames/frame_%04d.png -filter_complex "[0:v] split [a][b];[a] palettegen [p];[b][p] paletteuse" ${outputGif}`;
   
   try {
     execSync(ffmpegCmd, { stdio: 'inherit' });
-    console.log(\`\\nSuccess! GIF saved to \${outputGif}\`);
+    console.log(`\nSuccess! GIF saved to ${outputGif}`);
   } catch (err) {
     console.error('FFMPEG encoding failed:', err.message);
   }
