@@ -58,6 +58,7 @@ async function runExporter() {
   console.log('Starting Puppeteer...');
   const browser = await puppeteer.launch({ 
     headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
     defaultViewport: { width: 800, height: 400 } 
   });
   
