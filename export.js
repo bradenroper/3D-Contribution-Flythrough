@@ -102,7 +102,7 @@ async function runExporter() {
   const outputGif = path.join(process.cwd(), 'contributions.gif');
   if (fs.existsSync(outputGif)) fs.unlinkSync(outputGif);
 
-  const ffmpegCmd = `ffmpeg -y -framerate ${fps} -i frames/frame_%04d.png -filter_complex "[0:v] split [a][b];[a] palettegen [p];[b][p] paletteuse" ${outputGif}`;
+  const ffmpegCmd = `ffmpeg -y -framerate ${fps} -i frames/frame_%04d.png -filter_complex "[0:v] split [a][b];[a] palettegen [p];[b][p] paletteuse" -loop 0 ${outputGif}`;
   
   try {
     execSync(ffmpegCmd, { stdio: 'inherit' });
