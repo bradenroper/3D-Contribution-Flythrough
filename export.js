@@ -108,7 +108,11 @@ async function runExporter() {
     console.log(`\nSuccess! GIF saved to ${outputGif}`);
   } catch (err) {
     console.error('FFMPEG encoding failed:', err.message);
+    process.exit(1);
   }
 }
 
-runExporter().catch(console.error);
+runExporter().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
