@@ -1,0 +1,41 @@
+name: Generate 3D GitHub Contributions
+on:
+  schedule:
+    # Runs at midnight on the first day of every month
+    - cron: '0 0 1 * *'
+  workflow_dispatch: # Allows you to manually trigger the workflow from the Actions tab
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install FFMPEG
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Start Vite Dev Server
+        run: npm run dev &
+        
+      - name: Generate GIF
+        env:
+          GITHUB_USERNAME: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          sleep 3 # Wait for Vite to start
+          node export.js
+
+      - name: Commit and Push
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore: update 3d contributions gif [skip ci]"
+          file_pattern: contributions.gif
