@@ -8,13 +8,29 @@ export const Z_OFFSET = - (DAYS_PER_WEEK * (CELL_SIZE + CELL_GAP)) / 2;
 export function generateData() {
   const data = [];
   let maxCount = 0;
-  for (let w = 0; w < WEEKS; w++) {
-    for (let d = 0; d < DAYS_PER_WEEK; d++) {
-      // Create some clusters to make interesting areas
-      let noise = Math.sin(w / 3) * Math.cos(d / 2) + Math.sin(w / 5);
-      let count = Math.max(0, Math.floor(Math.random() * 5 + noise * 3));
-      if (count > maxCount) maxCount = count;
-      data.push({ w, d, count });
+
+  if (window.GITHUB_DATA) {
+    // Process real GraphQL data
+    // Assuming format from the `contributionCalendar` object
+    const weeks = window.GITHUB_DATA.weeks;
+    for (let w = 0; w < weeks.length; w++) {
+      const days = weeks[w].contributionDays;
+      for (let d = 0; d < 7; d++) {
+        if (!days[d]) continue; // Incomplete weeks
+        const count = days[d].contributionCount;
+        if (count > maxCount) maxCount = count;
+        data.push({ w, d, count, date: days[d].date });
+      }
+    }
+  } else {
+    // Fallback dummy data for local fast development
+    for (let w = 0; w < WEEKS; w++) {
+      for (let d = 0; d < DAYS_PER_WEEK; d++) {
+        let noise = Math.sin(w / 3) * Math.cos(d / 2) + Math.sin(w / 5);
+        let count = Math.max(0, Math.floor(Math.random() * 5 + noise * 3));
+        if (count > maxCount) maxCount = count;
+        data.push({ w, d, count, date: `Day ${w * 7 + d}` });
+      }
     }
   }
 

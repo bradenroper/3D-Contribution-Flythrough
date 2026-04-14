@@ -14,7 +14,7 @@ export function setupUI() {
           el.innerHTML = `
             <div class="glow"></div>
             <div class="content">
-              <h3>Day ${hp.block.userData.w * 7 + hp.block.userData.d}</h3>
+              <h3>${hp.block.userData.date}</h3>
               <p>${hp.block.userData.count} Contributions</p>
             </div>
           `;
