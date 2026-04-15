@@ -23,7 +23,7 @@ export function setupUI3D(scene, hoverPoints) {
 
     // 2. Text Canvas Plane
     const canvas = document.createElement('canvas');
-    canvas.width = 300;
+    canvas.width = 320;
     canvas.height = 150;
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
