@@ -23,8 +23,8 @@ export function setupUI3D(scene, hoverPoints) {
 
     // 2. Text Canvas Plane
     const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 256;
+    canvas.width = 300;
+    canvas.height = 150;
     const texture = new THREE.CanvasTexture(canvas);
     texture.minFilter = THREE.LinearFilter;
     const planeGeo = new THREE.PlaneGeometry(8, 4);
@@ -94,15 +94,15 @@ export function setupUI3D(scene, hoverPoints) {
 
           // Draw Date text
           ctx.fillStyle = '#8b949e';
-          ctx.font = '500 36px sans-serif';
+          ctx.font = '500 28px sans-serif';
           ctx.textAlign = 'left';
           ctx.textBaseline = 'top';
           ctx.fillText(dateReveal, 36, 40);
 
           // Draw Count text
           ctx.fillStyle = '#ffffffff';
-          ctx.font = 'bold 44px sans-serif';
-          ctx.fillText(countReveal, 36, 120);
+          ctx.font = 'bold 32px sans-serif';
+          ctx.fillText(countReveal, 36, 80);
 
           popup.texture.needsUpdate = true;
         }
