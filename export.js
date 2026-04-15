@@ -71,7 +71,7 @@ async function runExporter() {
   }, liveData);
 
   try {
-    await page.goto('http://localhost:5173', { waitUntil: 'load' });
+    await page.goto('http://localhost:5173', { waitUntil: 'networkidle2' });
   } catch (e) {
     console.error('Failed to load. Is Vite dev server running? (npm run dev)');
     await browser.close();

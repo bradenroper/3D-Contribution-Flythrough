@@ -38,7 +38,9 @@ export function setupUI() {
           
           // The leader line will visually connect from the box down to this (x,y)
           // We'll place the popup box slightly above and to the right of the actual block point
-          popup.el.style.transform = `translate(-20%, -100%) translate(${x}px, ${y - 40}px)`;
+          popup.el.style.left = `${x}px`;
+          popup.el.style.top = `${y}px`;
+          popup.el.style.transform = `translate(-20%, calc(-100% - 40px))`;
 
           // Typing Text Effect (around 15 chars per second)
           const charsToReveal = Math.floor(localTime * 25);

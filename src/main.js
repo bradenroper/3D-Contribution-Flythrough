@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { generateData } from './data.js';
 import { createScene } from './scene.js';
 import { setupCameraAndPath } from './camera.js';
-import { setupUI } from './ui.js';
+import { setupUI3D } from './ui3d.js';
 import './style.css';
 
 const canvas = document.querySelector('#preview');
@@ -14,7 +14,7 @@ renderer.shadowMap.enabled = true;
 const dataObj = generateData();
 const { scene, blocks } = createScene(dataObj);
 const { camera, curve, hoverPoints } = setupCameraAndPath(dataObj, blocks);
-const ui = setupUI();
+const ui = setupUI3D(scene, hoverPoints);
 
 const timeline = [];
 let tCursor = 0;
@@ -86,7 +86,7 @@ function renderFrame(dt) {
   camera.lookAt(currentLookAt);
 
   // Pass necessary info to UI for typing effect
-  ui.update(hoverPoints, activeHover, localTime, camera);
+  ui.update(activeHover, localTime, camera);
   
   renderer.render(scene, camera);
   window.frameRendered = true;
