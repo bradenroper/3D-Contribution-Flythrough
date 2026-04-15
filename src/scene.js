@@ -10,6 +10,27 @@ const COLORS = [
   new THREE.Color('#39d353')  // max
 ];
 
+function createTextLabel(text, x, z) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 64;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#8b949e';
+  ctx.font = 'bold 36px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, 128, 32);
+
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.minFilter = THREE.LinearFilter;
+  const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
+  const geo = new THREE.PlaneGeometry(4, 1);
+  const mesh = new THREE.Mesh(geo, material);
+  mesh.rotation.x = -Math.PI / 2;
+  mesh.position.set(x, 0.05, z);
+  return mesh;
+}
+
 export function createScene(dataObj) {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color('#0d1117');
@@ -29,12 +50,7 @@ export function createScene(dataObj) {
   dirLight.shadow.camera.bottom = -30;
   scene.add(dirLight);
 
-  // Instead of many individual BoxGeometries which can be slow,
-  // we will use individual meshes for simplicity or InstancedMesh for performance.
-  // Given only 365 blocks, individual meshes are totally fine and easier to handle.
-
   const geometry = new THREE.BoxGeometry(CELL_SIZE, 1, CELL_SIZE);
-  // translate geometry so bottom is at y=0 instead of y=-0.5
   geometry.translate(0, 0.5, 0);
 
   const maxH = 6;
@@ -65,20 +81,28 @@ export function createScene(dataObj) {
     mesh.position.set(x, 0, z);
     mesh.scale.y = h;
     
-    // Store item data in userData for UI mapping
     mesh.userData = { ...item, height: h };
 
     blocks.push(mesh);
     scene.add(mesh);
   }
 
-  // Base plane
-  const planeGeo = new THREE.PlaneGeometry(80, 40);
-  const planeMat = new THREE.MeshStandardMaterial({ color: '#0d1117', roughness: 0.8 });
-  const plane = new THREE.Mesh(planeGeo, planeMat);
-  plane.rotation.x = -Math.PI / 2;
-  plane.receiveShadow = true;
-  scene.add(plane);
+  // Draw Flat Labels
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  for (let m = 0; m < 12; m++) {
+    const w = (m / 12) * WEEKS + (WEEKS / 24); // Center of month
+    const x = X_OFFSET + w * (CELL_SIZE + CELL_GAP);
+    const z = Z_OFFSET - 1.5;
+    scene.add(createTextLabel(months[m], x, z));
+  }
+
+  const days = ['Mon', 'Wed', 'Fri'];
+  const dayIndices = [1, 3, 5]; // 0 is Sun
+  for (let i = 0; i < 3; i++) {
+    const x = X_OFFSET - 2.5;
+    const z = Z_OFFSET + dayIndices[i] * (CELL_SIZE + CELL_GAP);
+    scene.add(createTextLabel(days[i], x, z));
+  }
 
   return { scene, blocks };
 }
