@@ -81,7 +81,7 @@ export function createScene(dataObj) {
     mesh.position.set(x, 0, z);
     mesh.scale.y = h;
     
-    mesh.userData = { ...item, height: h };
+    mesh.userData = { ...item, height: h, baseColor: color.clone() };
 
     blocks.push(mesh);
     scene.add(mesh);

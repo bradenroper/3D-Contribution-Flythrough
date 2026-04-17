@@ -21,6 +21,8 @@ function smoothstep(x) {
   return x * x * (3 - 2 * x);
 }
 
+const CYAN = new THREE.Color('#00e5ff');
+
 // How far along the curve the camera drifts during a hover (slow creep instead of full stop)
 const HOVER_ADVANCE = 0.015;
 // Look-ahead/look-behind windows (seconds) for blending lookAt toward each highlight
@@ -124,6 +126,17 @@ function renderFrame(dt) {
 
   currentLookAt.lerp(lookAtTarget, 0.05);
   camera.lookAt(currentLookAt);
+
+  // Pulse the active highlight bar between its base green and cyan (3 cycles over 4s)
+  for (let i = 0; i < hoverPoints.length; i++) {
+    const block = hoverPoints[i].block;
+    if (i === activeHover) {
+      const pulse = 0.5 - 0.5 * Math.cos(2 * Math.PI * 3 * localTime / 4.0);
+      block.material.color.copy(block.userData.baseColor).lerp(CYAN, pulse);
+    } else {
+      block.material.color.copy(block.userData.baseColor);
+    }
+  }
 
   ui.update(activeHover, localTime, camera);
 
