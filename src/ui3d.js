@@ -70,7 +70,9 @@ export function setupUI3D(scene, hoverPoints) {
         // Billboarding perfectly to the camera
         popup.textPlane.lookAt(camera.position);
 
-        if (popup.opacity > 0.01) {
+        // Only update canvas text while actively hovering — during fade-out, leave the
+        // fully-typed text in place so it doesn't clear mid-fade.
+        if (i === activeHover) {
           // Calculate typing text reveal
           const charsToReveal = Math.floor(localTime * 25);
           const dateReveal = popup.fullDate.substring(0, charsToReveal);
