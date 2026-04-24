@@ -88,12 +88,34 @@ export function createScene(dataObj) {
   }
 
   // Draw Flat Labels
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  for (let m = 0; m < 12; m++) {
-    const w = (m / 12) * WEEKS + (WEEKS / 24); // Center of month
-    const x = X_OFFSET + w * (CELL_SIZE + CELL_GAP);
-    const z = Z_OFFSET - 1.5;
-    scene.add(createTextLabel(months[m], x, z));
+  const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  // Find the first week index for each calendar month from actual data dates
+  const monthStartWeeks = new Map(); // "YYYY-M" -> { w, monthIdx }
+  for (const item of dataObj.data) {
+    const parsed = new Date(item.date);
+    if (isNaN(parsed)) continue;
+    const key = `${parsed.getFullYear()}-${parsed.getMonth()}`;
+    const existing = monthStartWeeks.get(key);
+    if (existing === undefined || item.w < existing.w) {
+      monthStartWeeks.set(key, { w: item.w, monthIdx: parsed.getMonth() });
+    }
+  }
+
+  if (monthStartWeeks.size > 0) {
+    for (const { w, monthIdx } of monthStartWeeks.values()) {
+      const x = X_OFFSET + w * (CELL_SIZE + CELL_GAP);
+      const z = Z_OFFSET - 1.5;
+      scene.add(createTextLabel(MONTH_NAMES[monthIdx], x, z));
+    }
+  } else {
+    // Fallback for dummy data: evenly space Jan-Dec
+    for (let m = 0; m < 12; m++) {
+      const w = (m / 12) * WEEKS + (WEEKS / 24);
+      const x = X_OFFSET + w * (CELL_SIZE + CELL_GAP);
+      const z = Z_OFFSET - 1.5;
+      scene.add(createTextLabel(MONTH_NAMES[m], x, z));
+    }
   }
 
   const days = ['Mon', 'Wed', 'Fri'];
